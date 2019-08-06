@@ -34,7 +34,7 @@ class TwitterActions:
         return follower_list
 
     def tweet(self, tweet):
-        return self.api.update_status('{} #themadbot'.format(tweet))
+        return self.api.update_status('#themadbottweets {}'.format(tweet))
 
     def scrape_and_tweet(self, url):
         link = ''
@@ -57,7 +57,7 @@ class TwitterActions:
                 web_data = soup.find_all(class_='section module-body')
                 link = 'https://abc.net.au'+web_data[0].find('a')['href']
                 text = web_data[0].find('p').text
-        return self.api.update_status('{}... {} #themadbot'.format(text[:100], link))
+        return self.api.update_status('#themadbottweets {}... {}'.format(text[:100], link))
 
     def favorite(self, twitter_id):
         return self.api.create_favorite(twitter_id)

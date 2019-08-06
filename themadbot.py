@@ -30,7 +30,7 @@ def input_number(prompt):
 
 def display_menu(options):
     print(" ")
-    print("----------ASSISTWITS MENU-----------------")
+    print("------------ THE MAD BOT ----------------")
     for i in range(len(options)):
         print("{:d}. {:s}".format(i + 1, options[i]))
 
