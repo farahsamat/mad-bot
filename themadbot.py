@@ -53,12 +53,26 @@ if __name__ == "__main__":
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
     mad_bot = TwitterActions(api, username)
-    who_you_like = []
-    what_you_like = []
+    like_who_you_follow = []
+    what_you_like = ['#ml',
+                     '#AI',
+                     '#nlp',
+                     '#nerdjokes',
+                     '#melbourne',
+                     '#coding',
+                     '#womenintech',
+                     '#deakin',
+                     'uniten',
+                     'engineering',
+                     '#github'
+                     '#orchestra'
+                     'software']
+
     news_feed = ['https://towardsdatascience.com/',
                  'https://www.nature.com/',
                  'https://www.bbc.com/news',
-                 'https://www.abc.net.au/news/']
+                 'https://www.abc.net.au/news/',
+                 'https://www.malaysiakini.com/']
 
     while True:
         choice = display_menu(menu)
@@ -72,9 +86,9 @@ if __name__ == "__main__":
             # do something
             break
         elif choice == 4:
-            for twitter_id in who_you_like:
-                # do something
-                break
+            #topics = list(input("Enter a hashtag or multiple hashtags: ").split())
+            for topic in what_you_like:
+                mad_bot.retweet(topic)
         elif choice == 5:
             # do something
             break
