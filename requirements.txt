@@ -1,0 +1,5 @@
+tweepy
+bs4
+requests
+numpy
+dotenv
