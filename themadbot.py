@@ -1,8 +1,10 @@
 import tweepy
 import os
+import requests
 import numpy as np
 from twitter_actions import TwitterActions
 from dotenv import load_dotenv
+from bs4 import BeautifulSoup
 
 load_dotenv()
 
@@ -72,21 +74,25 @@ if __name__ == "__main__":
                  'https://www.nature.com/',
                  'https://www.bbc.com/news',
                  'https://www.abc.net.au/news/',
-                 'https://www.malaysiakini.com/']
+                 'https://www.malaysiakini.com/',
+                 'https://www.thestar.com.my/',
+                 'https://www.nytimes.com/',
+                 'https://www.9news.com.au/']
 
     while True:
         choice = display_menu(menu)
         if choice == 1:
-            tweet = input("Enter your tweet: ")
+            tweet = input("Enter tweet: ")
             mad_bot.tweet(tweet)
         elif choice == 2:
             for website in news_feed:
+                respond = requests.get(website).text
+                soup = BeautifulSoup(respond, 'html.parser')
                 mad_bot.scrape_and_tweet(website)
         elif choice == 3:
             # do something
             break
         elif choice == 4:
-            #topics = list(input("Enter a hashtag or multiple hashtags: ").split())
             for topic in what_you_like:
                 mad_bot.retweet(topic)
         elif choice == 5:

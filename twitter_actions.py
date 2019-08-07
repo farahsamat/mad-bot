@@ -1,13 +1,16 @@
 import tweepy
-import requests
 import pickle
-from bs4 import BeautifulSoup
+from news import News
+from science_tech import ScienceTech
 
 fav_sites = ['https://towardsdatascience.com/',
              'https://www.nature.com/',
              'https://www.bbc.com/news',
              'https://www.abc.net.au/news/',
-             'https://www.malaysiakini.com/']
+             'https://www.malaysiakini.com/',
+             'https://www.thestar.com.my/',
+             'https://www.nytimes.com/',
+             'https://www.9news.com.au/']
 
 
 class TwitterActions:
@@ -37,34 +40,32 @@ class TwitterActions:
         return self.api.update_status('#themadbottweets {}'.format(tweet))
 
     def scrape_and_tweet(self, url):
-        link = ''
-        text = ''
-        respond = requests.get(url).text
-        soup = BeautifulSoup(respond, 'html.parser')
+        get_news = News()
+        get_scitech = ScienceTech()
+        link, text = '', ''
+
         for i in range(len(fav_sites)):
             if url == fav_sites[0]:  # Towards Data Science
-                web_data = soup.find_all(class_='streamItem streamItem--section js-streamItem')
-                link = web_data[0].find('a')['href']
-                text = web_data[0].find('h3').text
+                link, text = get_scitech.towards_data_science()
             elif url == fav_sites[1]:  # Nature
-                web_data = soup.find_all('article')
-                link = web_data[0].find('a')['href']
-                text = web_data[0].find('h3').text #TODO: remove escape charaters
+                link, text = get_scitech.nature()
             elif url == fav_sites[2]:  # BBC
-                web_data = soup.find_all(class_='nw-c-top-stories-primary__story gel-layout gs-u-pb gs-u-pb0@m')
-                link = 'https://bbc.com'+web_data[0].find('a')['href']
-                text = web_data[0].find('h3').text
+                link, text = get_news.bbc()
             elif url == fav_sites[3]:  # ABC
-                web_data = soup.find_all(class_='section module-body')
-                link = 'https://abc.net.au'+web_data[0].find('a')['href']
-                text = web_data[0].find('h3').text
-            elif url == fav_sites[4]:  # Malaysiakini
-                web_data = soup.find_all(class_='uk-container')
-                link = 'https://www.malaysiakini.com' + web_data[0].find('a')['href']
-                text = web_data[0].find('h3').text
-        return self.api.update_status('#themadbottweets {}... {}'.format(text[:100], link))
+                link, text = get_news.abc()
+            elif url == fav_sites[4]:   # Malaysiakini
+                link, text = get_news.malaysia_kini()
+            elif url == fav_sites[5]:   # The Star
+                link, text = get_news.the_star()
+            elif url == fav_sites[6]:   # NY Times
+                link, text = get_news.ny_times()
+            elif url == fav_sites[7]:   # Nine News
+                link, text = get_news.nine_news()
+
+        return self.api.update_status('#themadbottweets {} {}'.format(text[:100], link))
 
     def favorite(self, twitter_id):
+
         return self.api.create_favorite(twitter_id)
 
     def retweet(self, keyword):
