@@ -56,19 +56,22 @@ if __name__ == "__main__":
 
     mad_bot = TwitterActions(api, username)
     like_who_you_follow = []
-    what_you_like = ['#ml',
+    what_you_like = ['machine learning',
                      '#AI',
                      '#nlp',
-                     '#nerdjokes',
+                     '#data',
                      '#melbourne',
                      '#coding',
                      '#womenintech',
                      '#deakin',
                      'uniten',
+                     '#unitenalumni',
                      'engineering',
                      '#github'
                      '#orchestra'
-                     'software']
+                     'software',
+                     'Malaysia',
+                     ]
 
     news_feed = ['https://towardsdatascience.com/',
                  'https://www.nature.com/',
@@ -86,18 +89,17 @@ if __name__ == "__main__":
             mad_bot.tweet(tweet)
         elif choice == 2:
             for website in news_feed:
-                respond = requests.get(website).text
-                soup = BeautifulSoup(respond, 'html.parser')
                 mad_bot.scrape_and_tweet(website)
         elif choice == 3:
-            # do something
-            break
+            for topic in what_you_like:
+                mad_bot.like(topic)
         elif choice == 4:
             for topic in what_you_like:
                 mad_bot.retweet(topic)
         elif choice == 5:
-            # do something
-            break
+            keywords = list(input("Enter keyword(s): ").split(' '))
+            for keyword in keywords:
+                mad_bot.reply(keyword)
         elif choice == 6:
             # do something
             break

@@ -1,5 +1,7 @@
 import tweepy
 import pickle
+import re
+from textblob import TextBlob
 from news import News
 from science_tech import ScienceTech
 
@@ -37,13 +39,12 @@ class TwitterActions:
         return follower_list
 
     def tweet(self, tweet):
-        return self.api.update_status('#themadbottweets {}'.format(tweet))
+        return self.api.update_status('{} #madbot '.format(tweet))
 
     def scrape_and_tweet(self, url):
         get_news = News()
         get_scitech = ScienceTech()
         link, text = '', ''
-
         for i in range(len(fav_sites)):
             if url == fav_sites[0]:  # Towards Data Science
                 link, text = get_scitech.towards_data_science()
@@ -61,20 +62,29 @@ class TwitterActions:
                 link, text = get_news.ny_times()
             elif url == fav_sites[7]:   # Nine News
                 link, text = get_news.nine_news()
+        return self.api.update_status('{} {} #madbot'.format(text[:100], link))
 
-        return self.api.update_status('#themadbottweets {} {}'.format(text[:100], link))
-
-    def favorite(self, twitter_id):
-
-        return self.api.create_favorite(twitter_id)
+    def like(self, keyword):
+        for tweet in tweepy.Cursor(self.api.search, q='{}'.format(keyword), include_entities=True, lang='en').items(20):
+            if (not tweet.retweeted) and ('RT @' not in tweet.text):
+                return self.api.create_favorite(tweet.id)
 
     def retweet(self, keyword):
         for tweet in tweepy.Cursor(self.api.search, q='{}'.format(keyword), include_entities=True, lang='en').items(20):
             if (not tweet.retweeted) and ('RT @' not in tweet.text):
                 return self.api.retweet(tweet.id)
 
-    def reply(self):
-        return
+    def reply(self, keyword):
+        for tweet in tweepy.Cursor(self.api.search, q='{}'.format(keyword), include_entities=True, lang='en').items(20):
+            if (not tweet.retweeted) and ('RT @' not in tweet.text):
+                clean_tweet = ' '.join(re.sub(r"[^a-z0-9]", " ", tweet.text.lower()).split(" "))
+                analysis = TextBlob(clean_tweet)
+                if analysis.sentiment.polarity > 0:
+                    return self.api.update_status("Nice! @{}".format(tweet.user.screen_name), tweet.id)
+                elif analysis.sentiment.polarity == 0:
+                    return self.api.update_status("Wait, whaaaat? @{}".format(tweet.user.screen_name), tweet.id)
+                else:
+                    return self.api.update_status("Hmmmm @{}".format(tweet.user.screen_name), tweet.id)
 
     def message(self):
         return
