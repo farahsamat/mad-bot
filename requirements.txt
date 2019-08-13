@@ -3,3 +3,5 @@ bs4
 requests
 numpy
 dotenv
+textblob
+gensim
