@@ -1,19 +1,19 @@
 import tweepy
 import os
-import requests
+import textwrap
 import numpy as np
 from twitter_actions import TwitterActions
 from dotenv import load_dotenv
-from bs4 import BeautifulSoup
 
 load_dotenv()
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-menu = np.array(["Update Status",
-                 "What's New",
+menu = np.array(["Tweet",
+                 "Post Article Summary",
+                 "Post News",
                  "Fav/Like",
-                 "RT",
+                 "Retweet",
                  "Mention/Reply",
                  "Personalised greetings/DM",
                  "Exit"])
@@ -54,54 +54,40 @@ if __name__ == "__main__":
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
-    mad_bot = TwitterActions(api, username)
-    like_who_you_follow = []
-    what_you_like = ['machine learning',
-                     '#AI',
-                     '#nlp',
-                     '#data',
-                     '#melbourne',
-                     '#coding',
-                     '#womenintech',
-                     '#deakin',
-                     'uniten',
-                     '#unitenalumni',
-                     'engineering',
-                     '#github'
-                     '#orchestra'
-                     'software',
-                     'Malaysia',
-                     ]
-
-    news_feed = ['https://towardsdatascience.com/',
-                 'https://www.nature.com/',
-                 'https://www.bbc.com/news',
-                 'https://www.abc.net.au/news/',
-                 'https://www.malaysiakini.com/',
-                 'https://www.thestar.com.my/',
-                 'https://www.nytimes.com/',
-                 'https://www.9news.com.au/']
+    mad_bot = TwitterActions()
 
     while True:
         choice = display_menu(menu)
         if choice == 1:
-            tweet = input("Enter tweet: ")
-            mad_bot.tweet(tweet)
+            api.update_status(mad_bot.tweet())
         elif choice == 2:
-            for website in news_feed:
-                mad_bot.scrape_and_tweet(website)
+            url = input("Paste url: ")
+            if len(mad_bot.summary_thread(url)) <= 140:
+                api.update_status('1/1\n', url+'\n', mad_bot.summary_thread(url))
+            else:
+                text_chunks = textwrap.wrap(mad_bot.summary_thread(url), 140)
+                api.update_status('2/{}\n'.format(len(text_chunks)) + url + '\n' + text_chunks[0])
+                tweet = api.user_timeline(screen_name=username, count=1)[0]
+                for i in range(len(text_chunks)-1):
+                    api.update_status('{}/{}\n'.format(i+2, len(text_chunks)) + text_chunks[i+1], tweet.id)
         elif choice == 3:
-            for topic in what_you_like:
-                mad_bot.like(topic)
+            news_list = mad_bot.scrape_and_tweet()
+            for i in range(len(news_list)):
+                try:
+                    api.update_status(news_list[i])
+                except tweepy.error.TweepError as te:
+                    print("You have posted " + news_list[i])
         elif choice == 4:
-            for topic in what_you_like:
-                mad_bot.retweet(topic)
-        elif choice == 5:
-            keywords = list(input("Enter keyword(s): ").split(' '))
-            for keyword in keywords:
-                mad_bot.reply(keyword)
-        elif choice == 6:
-            # do something
+            #TODO
             break
-        elif choice == 7:  # Exit app
+        elif choice == 5:
+            #TODO
+            break
+        elif choice == 6:
+            #TODO
+            break
+        elif choice == 7:
+            #TODO
+            break
+        elif choice == 8:  # Exit app
             break
