@@ -1,8 +1,11 @@
 import tweepy
 import os
 import textwrap
+import random
 import numpy as np
 from twitter_actions import TwitterActions
+from quotes import Quotes
+from websites import Websites
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -54,40 +57,49 @@ if __name__ == "__main__":
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
-    mad_bot = TwitterActions()
+    mad_bot = TwitterActions(api)
 
     while True:
         choice = display_menu(menu)
         if choice == 1:
-            api.update_status(mad_bot.tweet())
+            get_quote = Quotes()
+            mad_bot.tweet(get_quote.good_reads())
         elif choice == 2:
             url = input("Paste url: ")
-            if len(mad_bot.summary_thread(url)) <= 140:
-                api.update_status('1/1\n', url+'\n', mad_bot.summary_thread(url))
+            if len(mad_bot.tweet_thread(url)) <= 140:
+                api.update_status('1/1\n', url + '\n', mad_bot.tweet_thread(url))
             else:
-                text_chunks = textwrap.wrap(mad_bot.summary_thread(url), 140)
+                text_chunks = textwrap.wrap(mad_bot.tweet_thread(url), 140)
                 api.update_status('2/{}\n'.format(len(text_chunks)) + url + '\n' + text_chunks[0])
                 tweet = api.user_timeline(screen_name=username, count=1)[0]
-                for i in range(len(text_chunks)-1):
-                    api.update_status('{}/{}\n'.format(i+2, len(text_chunks)) + text_chunks[i+1], tweet.id)
+                for i in range(len(text_chunks) - 1):
+                    api.update_status('{}/{}\n'.format(i + 2, len(text_chunks)) + text_chunks[i + 1], tweet.id)
         elif choice == 3:
-            news_list = mad_bot.scrape_and_tweet()
-            for i in range(len(news_list)):
-                try:
-                    api.update_status(news_list[i])
-                except tweepy.error.TweepError as te:
-                    print("You have posted " + news_list[i])
+            scrape = Websites()
+            link = [scrape.ny_times(),
+                    scrape.nine_news(),
+                    scrape.the_star(),
+                    scrape.abc(),
+                    scrape.bbc(),
+                    scrape.towards_data_science(),
+                    scrape.nature(),
+                    scrape.google_ai(),
+                    scrape.tech_crunch(),
+                    scrape.malaysia_kini()]
+            random.shuffle(link)
+            for i in range(len(link)):
+                mad_bot.tweet_news(link[i])
         elif choice == 4:
-            #TODO
+            # TODO
             break
         elif choice == 5:
-            #TODO
+            # TODO
             break
         elif choice == 6:
-            #TODO
+            # TODO
             break
         elif choice == 7:
-            #TODO
+            # TODO
             break
         elif choice == 8:  # Exit app
             break
