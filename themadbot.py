@@ -1,7 +1,7 @@
 import tweepy
 import os
-import textwrap
 import random
+import inspect
 import numpy as np
 from twitter_actions import TwitterActions
 from quotes import Quotes
@@ -13,9 +13,9 @@ load_dotenv()
 os.system('cls' if os.name == 'nt' else 'clear')
 
 menu = np.array(["Tweet",
-                 "Post Article Summary",
-                 "Post News",
-                 "Fav/Like",
+                 "Summarize Article",
+                 "News",
+                 "Like",
                  "Retweet",
                  "Mention/Reply",
                  "Personalised greetings/DM",
@@ -47,17 +47,16 @@ def display_menu(options):
 
 
 if __name__ == "__main__":
+    username = os.getenv("USERNAME")
     consumer_key = os.getenv("KEY")
     consumer_secret = os.getenv("SECRET")
     access_token = os.getenv("TOKEN")
     access_token_secret = os.getenv("TOKEN_SECRET")
-    username = os.getenv("USERNAME")
-
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
     auth.set_access_token(access_token, access_token_secret)
     api = tweepy.API(auth, wait_on_rate_limit=True)
 
-    mad_bot = TwitterActions(api)
+    mad_bot = TwitterActions(api, username)
 
     while True:
         choice = display_menu(menu)
@@ -66,14 +65,7 @@ if __name__ == "__main__":
             mad_bot.tweet(get_quote.good_reads())
         elif choice == 2:
             url = input("Paste url: ")
-            if len(mad_bot.tweet_thread(url)) <= 140:
-                api.update_status('1/1\n', url + '\n', mad_bot.tweet_thread(url))
-            else:
-                text_chunks = textwrap.wrap(mad_bot.tweet_thread(url), 140)
-                api.update_status('2/{}\n'.format(len(text_chunks)) + url + '\n' + text_chunks[0])
-                tweet = api.user_timeline(screen_name=username, count=1)[0]
-                for i in range(len(text_chunks) - 1):
-                    api.update_status('{}/{}\n'.format(i + 2, len(text_chunks)) + text_chunks[i + 1], tweet.id)
+            mad_bot.tweet_thread(url)
         elif choice == 3:
             scrape = Websites()
             link = [scrape.ny_times(),
@@ -90,10 +82,8 @@ if __name__ == "__main__":
             for i in range(len(link)):
                 mad_bot.tweet_news(link[i])
         elif choice == 4:
-            # TODO
-            break
+            mad_bot.like_tweets()
         elif choice == 5:
-            # TODO
             break
         elif choice == 6:
             # TODO
