@@ -9,7 +9,9 @@ test_tweet = 'Test tweet. #themadbot'
 test_news_list = ['#news1 at his elit sententiae',
                   '#news2 te quo aliquam mediocrem',
                   '#news3 id est falli viderer.']
+test_text_summary = ''
 
+username = os.getenv("USERNAME")
 consumer_key = os.getenv("KEY")
 consumer_secret = os.getenv("SECRET")
 access_token = os.getenv("TOKEN")
@@ -34,3 +36,4 @@ class TwitterActionsTest(unittest.TestCase):
         with self.assertRaises(tweepy.error.TweepError):
             for i in range(len(test_news_list)):
                 api.update_status(test_news_list[i])
+
