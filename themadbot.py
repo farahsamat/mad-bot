@@ -16,9 +16,6 @@ menu = np.array(["Tweet",
                  "Summarize Article",
                  "News",
                  "Like",
-                 "Retweet",
-                 "Mention/Reply",
-                 "Personalised greetings/DM",
                  "Exit"])
 
 
@@ -84,12 +81,4 @@ if __name__ == "__main__":
         elif choice == 4:
             mad_bot.like_tweets()
         elif choice == 5:
-            break
-        elif choice == 6:
-            # TODO
-            break
-        elif choice == 7:
-            # TODO
-            break
-        elif choice == 8:  # Exit app
             break
