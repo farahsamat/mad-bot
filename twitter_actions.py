@@ -1,7 +1,5 @@
 import tweepy
-import re
 import textwrap
-from textblob import TextBlob
 from text_summary import TextSummary
 from gensim.summarization import summarize
 
@@ -43,17 +41,11 @@ class TwitterActions:
                 print(e)
 
     def like_tweets(self):
-        circle = []
-        for user in tweepy.Cursor(self.api.friends, screen_name=self.username).items():
-            circle.append(user.screen_name)
-        for user in tweepy.Cursor(self.api.followers, screen_name=self.username).items():
-            if user not in circle:
-                circle.append(user.screen_name)
-        for person in circle:
-            for tweet in tweepy.Cursor(self.api.search, q=person, include_entities=True, in_reply_to_status_id=None, lang='en').items(1):
-                if (not tweet.retweeted) and ('RT @' not in tweet.text):
-                    try:
-                        self.api.create_favorite(tweet.id)
-                    except tweepy.error.TweepError as e:
-                        print(person, e)
+        friends = [user.screen_name for user in tweepy.Cursor(self.api.friends, screen_name=self.username).items()]
+        for friend in friends:
+            try:
+                for tweet in tweepy.Cursor(self.api.user_timeline, screen_name='@'+friend, exclude_replies=True, include_rts=False).items(1):
+                    self.api.create_favorite(tweet.id)
+            except tweepy.error.TweepError as e:
+                print(friend, e)
 
