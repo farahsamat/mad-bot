@@ -13,7 +13,7 @@ Text generator/question-answering/interactive tweets using SOTA language models
 
 ## Getting Started
 * This app runs on [Python 3](https://www.python.org/downloads/).
-* Clone this repository: `git clone https:://github.com/farahsamat/sentweetment.git`
+* Clone this repository: `git clone https:://github.com/farahsamat/mad-bot.git`
 * Install dependencies: `pip install -r requirements.txt`
 * API authentication credentials for Twitter API access: Rename `.env.example` to `.env` and populate it with the required login credentials.
 > If you haven't downloaded the trained GPT-2 models:
