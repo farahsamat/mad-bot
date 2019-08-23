@@ -1,7 +1,6 @@
 import tweepy
 import os
 import random
-import inspect
 import numpy as np
 from twitter_actions import TwitterActions
 from quotes import Quotes
@@ -12,10 +11,12 @@ load_dotenv()
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-menu = np.array(["Tweet",
-                 "Summarize Article",
-                 "News",
-                 "Like",
+menu = np.array(["Tweet quote",
+                 "Tweet random",
+                 "Tweet Summary",
+                 "Tweet News",
+                 "Like Tweets",
+                 "Reply Tweets"
                  "Exit"])
 
 
@@ -59,11 +60,13 @@ if __name__ == "__main__":
         choice = display_menu(menu)
         if choice == 1:
             get_quote = Quotes()
-            mad_bot.tweet(get_quote.good_reads())
+            mad_bot.tweet_quote(get_quote.good_reads())
         elif choice == 2:
-            url = input("Paste url: ")
-            mad_bot.tweet_thread(url)
+            mad_bot.tweet_random()
         elif choice == 3:
+            url = input("Paste url: ")
+            mad_bot.tweet_summary(url)
+        elif choice == 4:
             scrape = Websites()
             link = [scrape.ny_times(),
                     scrape.nine_news(),
@@ -78,7 +81,9 @@ if __name__ == "__main__":
             random.shuffle(link)
             for i in range(len(link)):
                 mad_bot.tweet_news(link[i])
-        elif choice == 4:
+        elif choice == 5:
             mad_bot.like_tweets()
+        elif choice == 6:
+            break
         elif choice == 5:
             break
