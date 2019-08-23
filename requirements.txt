@@ -5,4 +5,4 @@ numpy
 dotenv
 textblob
 gensim
-tensorflow
+tensorflow==1.14.0
