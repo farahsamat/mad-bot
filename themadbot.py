@@ -13,10 +13,10 @@ os.system('cls' if os.name == 'nt' else 'clear')
 
 menu = np.array(["Tweet quote",
                  "Tweet random",
-                 "Tweet Summary",
-                 "Tweet News",
-                 "Like Tweets",
-                 "Reply Tweets"
+                 "Tweet summary",
+                 "Tweet news",
+                 "Like tweets",
+                 "Reply tweets",
                  "Exit"])
 
 
@@ -85,5 +85,5 @@ if __name__ == "__main__":
             mad_bot.like_tweets()
         elif choice == 6:
             break
-        elif choice == 5:
+        elif choice == 7:
             break

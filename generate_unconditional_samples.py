@@ -7,6 +7,9 @@ import tensorflow as tf
 import model
 import sample
 import encoder
+import random
+
+models = os.listdir(os.path.abspath('models'))
 
 
 class GenerateUnconditionalSamples:
@@ -15,7 +18,7 @@ class GenerateUnconditionalSamples:
 
     def sample_model(
             self,
-            model_name='124M',
+            model_name=random.choice(models),
             seed=None,
             nsamples=1,
             batch_size=1,
@@ -44,7 +47,7 @@ class GenerateUnconditionalSamples:
          :models_dir : path to parent folder containing model subfolders
          (i.e. contains the <model_name> folder)
         """
-        #models_dir = os.path.abspath('models')
+        # models_dir = os.path.abspath('models')
         enc = encoder.get_encoder(model_name, models_dir)
         hparams = model.default_hparams()
         with open('{}/{}/hparams.json'.format(models_dir, model_name)) as f:
@@ -67,7 +70,7 @@ class GenerateUnconditionalSamples:
             )[:, 1:]
 
             saver = tf.train.Saver()
-            ckpt = tf.train.latest_checkpoint('/{}/{}'.format(models_dir,model_name))
+            ckpt = tf.train.latest_checkpoint('/{}/{}'.format(models_dir, model_name))
             saver.restore(sess, ckpt)
             generated = 0
             while nsamples == 0 or generated < nsamples:
@@ -75,5 +78,4 @@ class GenerateUnconditionalSamples:
                 for i in range(batch_size):
                     generated += batch_size
                     text = enc.decode(out[i])
-                    return "'" + text + "'"
-
+                    return '#' + model_name + '\n' + "'" + text + "'"

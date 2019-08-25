@@ -22,21 +22,15 @@ class TwitterActions:
     def tweet_random(self):
         gpt_model = GenerateUnconditionalSamples()
         generate_text = fire.Fire(gpt_model.sample_model)
-        if len(generate_text) <= 280:
-            try:
-                self.api.update_status(generate_text, tweet_mode='extended')
-            except tweepy.error.TweepError as e:
-                print(e)
-        else:
-            text_chunks = textwrap.wrap(generate_text, 280-6)
-            try:
-                self.api.update_status('[{}] The following text is brought to you by #OpenAI GPT2 124M. Reader discretion is advised.'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), tweet_mode='extended')
-                tweet = self.api.user_timeline(screen_name=self.username, count=1)[0]
-                for i in range(len(text_chunks)):
-                    self.api.update_status('{}/{}\n'.format(i+1, len(text_chunks)) + text_chunks[i], tweet.id,
-                                           tweet_mode='extended')
-            except tweepy.error.TweepError as e:
-                print(e)
+        text_chunks = textwrap.wrap(generate_text, 280-5)
+        try:
+            self.api.update_status('[{}] The following text is brought to you by #OpenAI GPT2. Reader discretion is advised.'.format(datetime.now().strftime('%Y-%m-%d %H:%M:%S')), tweet_mode='extended')
+            tweet = self.api.user_timeline(screen_name=self.username, count=1)[0]
+            for i in range(len(text_chunks)):
+                self.api.update_status('{}/{}\n'.format(i+1, len(text_chunks)) + text_chunks[i], tweet.id,
+                                       tweet_mode='extended')
+        except tweepy.error.TweepError as e:
+            print(e)
 
     def tweet_news(self, news_item):
         try:
