@@ -84,6 +84,6 @@ if __name__ == "__main__":
         elif choice == 5:
             mad_bot.like_tweets()
         elif choice == 6:
-            break
+            mad_bot.reply_tweets()
         elif choice == 7:
             break

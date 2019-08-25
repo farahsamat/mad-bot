@@ -2,6 +2,7 @@ import tweepy
 import textwrap
 import fire
 from generate_unconditional_samples import GenerateUnconditionalSamples
+from interactive_conditional_samples import InteractiveConditionalSample
 from text_summary import TextSummary
 from gensim.summarization import summarize
 from datetime import datetime
@@ -68,4 +69,10 @@ class TwitterActions:
                 print(friend, e)
 
     def reply_tweets(self):
-        return
+        try:
+            for tweet in tweepy.Cursor(self.api.mentions_timeline).items(1):
+                gpt_model = InteractiveConditionalSample(tweet.text[16:])
+                generate_reply = fire.Fire(gpt_model.interact_model())
+                self.api.update_status('@'+tweet.user.screen_name + generate_reply, tweet.id, tweet_mode='extended')
+        except tweepy.error.TweepError as e:
+                print(e)
