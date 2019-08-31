@@ -6,3 +6,6 @@ dotenv
 textblob
 gensim
 tensorflow==1.14.0
+matplotlib
+wordcloud
+pillow

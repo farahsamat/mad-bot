@@ -17,6 +17,7 @@ menu = np.array(["Tweet quote",
                  "Tweet news",
                  "Like tweets",
                  "Reply tweets",
+                 "View trends",
                  "Exit"])
 
 
@@ -60,7 +61,11 @@ if __name__ == "__main__":
         choice = display_menu(menu)
         if choice == 1:
             get_quote = Quotes()
-            mad_bot.tweet_quote(get_quote.good_reads())
+            link = [get_quote.brainy(),
+                    get_quote.good_reads()]
+            random.shuffle(link)
+            for i in range(len(link)):
+                mad_bot.tweet_quote(link[i])
         elif choice == 2:
             mad_bot.tweet_random()
         elif choice == 3:
@@ -86,4 +91,7 @@ if __name__ == "__main__":
         elif choice == 6:
             mad_bot.reply_tweets()
         elif choice == 7:
+            keyword = input("Enter hashtag keyword: ")
+            mad_bot.view_trend(keyword)
+        elif choice == 8:
             break
