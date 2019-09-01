@@ -1,13 +1,12 @@
 import tweepy
 import textwrap
 import fire
-from generate_unconditional_samples import GenerateUnconditionalSamples
-from interactive_conditional_samples import InteractiveConditionalSample
-from text_summary import TextSummary
-from cloud_image import CloudImage
+from src.generate_unconditional_samples import GenerateUnconditionalSamples
+from src.interactive_conditional_samples import InteractiveConditionalSample
+from src.text_summary import TextSummary
+from src.cloud_image import CloudImage
 from gensim.summarization import summarize
 from datetime import datetime
-
 
 class TwitterActions:
     def __init__(self, api, username):

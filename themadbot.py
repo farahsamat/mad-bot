@@ -3,8 +3,8 @@ import os
 import random
 import numpy as np
 from twitter_actions import TwitterActions
-from quotes import Quotes
-from websites import Websites
+from src.quotes import Quotes
+from src.websites import Websites
 from dotenv import load_dotenv
 
 load_dotenv()
