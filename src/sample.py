@@ -1,5 +1,4 @@
 import tensorflow as tf
-
 import src.model as model
 
 def top_k_logits(logits, k):
