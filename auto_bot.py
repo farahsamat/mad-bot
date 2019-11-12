@@ -7,12 +7,11 @@ from src.quotes import Quotes
 from src.websites import Websites
 from dotenv import load_dotenv
 
-
 load_dotenv()
 os.system('cls' if os.name == 'nt' else 'clear')
-INTERVAL = 60 * 60 * 0.4
-MINI_INTERVAL = 60 * 60 * 0.04
-MICRO_INTERVAL = 60 * 60 * 0.004
+INTERVAL = 60 * 60 * 1
+MINI_INTERVAL = 60 * 60 * 0.1
+MICRO_INTERVAL = 60 * 60 * 0.01
 sleep_time = [INTERVAL, MINI_INTERVAL, MICRO_INTERVAL]
 
 if __name__ == "__main__":
@@ -27,11 +26,11 @@ if __name__ == "__main__":
     mad_bot = TwitterActions(api, username)
 
     while True:
+        url_collection = []
+
         get_quote = Quotes()
         link = [get_quote.brainy(),
-                get_quote.good_reads(),
-                get_quote.good_housekeeping(),
-                get_quote.keep_inspiring()]
+                get_quote.good_reads()]
         random.shuffle(link)
 
         scrape = Websites()
@@ -44,40 +43,35 @@ if __name__ == "__main__":
         random.shuffle(news)
 
         sc_tech = [scrape.towards_data_science(),
-                 scrape.nature(),
                  scrape.google_ai(),
-                 scrape.tech_crunch(),
-                 scrape.sc_news(),
-                 scrape.the_verge()]
+                 scrape.tech_crunch()]
         random.shuffle(sc_tech)
 
-        blogs = [scrape.song_of_style(),
-                scrape.bag_snob()]
-        random.shuffle(blogs)
 
-        for q, n, a, b in zip(link, news, sc_tech, blogs):
-            mad_bot.tweet_quote(q)
+        for quote, news, tech in zip(link, news, sc_tech):
+            mad_bot.tweet_quote(quote)
             pause = random.choice(sleep_time)
             print(int(pause), "seconds")
             time.sleep(pause)
 
-            text, url = n
+            text, url = news
+            url_collection.append(url)
             mad_bot.tweet_news(text, url)
             pause = random.choice(sleep_time)
             print(int(pause), "seconds")
             time.sleep(pause)
 
-            text, url = a
-            mad_bot.tweet_sc_tech(text, url)
+            text, url = tech
+            url_collection.append(url)
+            mad_bot.tweet_news(text, url)
             pause = random.choice(sleep_time)
             print(int(pause), "seconds")
             time.sleep(pause)
 
-            text, url = b
-            mad_bot.tweet_lifestyle(text, url)
-            pause = random.choice(sleep_time)
-            print(int(pause), "seconds")
-            time.sleep(pause)
+        mad_bot.tweet_summary(random.choice(url_collection))
+        pause = random.choice(sleep_time)
+        print(pause, "seconds")
+        time.sleep(pause)
 
         mad_bot.like_tweets()
         pause = random.choice(sleep_time)
