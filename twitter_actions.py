@@ -8,6 +8,7 @@ from src.cloud_image import CloudImage
 from gensim.summarization import summarize
 from datetime import datetime
 
+
 class TwitterActions:
     def __init__(self, api, username):
         self.api = api
@@ -35,11 +36,11 @@ class TwitterActions:
         except tweepy.error.TweepError as e:
             print(e)
 
-    def tweet_news(self, news_item):
+    def tweet_news(self, text, link):
         try:
-            self.api.update_status(news_item, tweet_method='extended')
+            self.api.update_status(text + ' ' + link, tweet_method='extended')
         except tweepy.error.TweepError as e:
-            print(news_item, e)
+            print(text, e)
 
     def tweet_summary(self, url):
         whole_passage = TextSummary()
